@@ -54,48 +54,13 @@ server <- function(input, output, session) {
     
     p <- ggplot(dat, aes(geometry = geometry, col = I(col), key = key)) +
       geom_sf(data = dat) +
-      geom_segment(aes(x = xini, y = yini, xend = xend, yend = yend), alpha = 0) +
       geom_point(aes(x = xini, y = yini), alpha = 0) +
       theme(axis.title.x = element_blank(), axis.title.y = element_blank())
     
-    p <- if (!is.null(input$hot)) {
-      df <- hot_to_r(input$hot)
-      df_no_c <- df |> filter(is.na(coordinates))
-      df_ya_c <- df |> filter(!is.na(coordinates))
-      p +
-        annotate(
-          "point",
-          x = df_no_c$x,
-          y = df_no_c$y,
-          colour = "red",
-          size = 2
-        ) +
-        annotate(
-          "point",
-          x = df_ya_c$x,
-          y = df_ya_c$y,
-          colour = "limegreen",
-          size = 2
-        )
-    } else {
-      p
-    }
-    
     p |>
       ggplotly() |>
-      config(
-        displaylogo = FALSE,
-        displayModeBar = TRUE,
-        scrollZoom = TRUE,
-        modeBarButtonsToRemove = c('zoom2d',
-                                   'autoScale', 
-                                   'hoverClosestCartesian', 
-                                   'hoverCompareCartesian', 
-                                   'toImage')
-      ) |> 
       event_register("plotly_selected") |>
-      layout(dragmode = "lasso") |> 
-      layout(showlegend = FALSE)
+      layout(dragmode = "lasso")
   })
   
 }
